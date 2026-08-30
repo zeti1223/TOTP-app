@@ -118,7 +118,7 @@ const paramBadges = computed(() => {
   const acc = props.account
 
   if (acc.type === 'steam') {
-    badges.push({ label: '🎮 Steam Guard', class: 'bg-blue-950/60 text-blue-300 border-blue-800/50' })
+    badges.push({ label: 'Steam Guard', class: 'bg-blue-950/60 text-blue-300 border-blue-800/50' })
     badges.push({ label: '5 chars', class: 'bg-gray-800 text-gray-400 border-gray-700' })
     badges.push({ label: '30s', class: 'bg-gray-800 text-gray-400 border-gray-700' })
     return badges
