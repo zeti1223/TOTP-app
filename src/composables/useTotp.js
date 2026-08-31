@@ -1,10 +1,6 @@
 import { ref, computed, onMounted, onUnmounted } from 'vue'
 import { generateTotp, generateSteamCode, getAccountDefaults } from '../totp.js'
 
-/**
- * useTotp – accepts a full account object (or getter returning one).
- * Supports configurable period, digits, algorithm and Steam Guard type.
- */
 export function useTotp(accountGetter) {
   const code = ref('------')
   const nextCode = ref('------')
@@ -15,7 +11,6 @@ export function useTotp(accountGetter) {
 
   function getAccount() {
     const raw = typeof accountGetter === 'function' ? accountGetter() : accountGetter
-    // Support legacy usage where only a secret string is passed
     if (typeof raw === 'string') {
       return { secret: raw, ...getAccountDefaults() }
     }
@@ -34,7 +29,7 @@ export function useTotp(accountGetter) {
 
   const formattedCode = computed(() => {
     if (isError.value) return 'Invalid Key'
-    if (isSteam.value) return code.value // Steam: 5 chars, no space
+    if (isSteam.value) return code.value
     const digits = getAccount().digits || 6
     const c = code.value.padStart(digits, '0')
     if (digits === 8) return c.slice(0, 4) + ' ' + c.slice(4)

@@ -1,5 +1,5 @@
 <template>
-  <div class="min-h-screen bg-gray-950 text-gray-100 flex flex-col">
+  <div class="min-h-screen flex flex-col">
     <!-- Header -->
     <AppHeader
       :count="accounts.length"

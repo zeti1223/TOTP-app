@@ -1,16 +1,16 @@
 <template>
-  <div class="bg-gray-900 rounded-2xl border border-gray-800 overflow-hidden">
+  <div class="bg-[#1e1e1e] rounded-2xl border-2 border-[#333333] neo-shadow overflow-hidden">
     <!-- Header - click to toggle -->
     <button
       @click="open = !open"
-      class="w-full flex items-center justify-between px-5 py-4 text-left hover:bg-gray-800/50 transition-colors"
+      class="w-full flex items-center justify-between px-5 py-4 text-left hover:bg-[#1e1e1e]/50 transition-colors"
     >
       <div class="flex items-center gap-2.5">
-        <i class="fa-solid fa-plus text-indigo-400"></i>
-        <span class="font-semibold text-gray-200">Add New Account</span>
+        <i class="fa-solid fa-plus text-[#6965db]"></i>
+        <span class="font-semibold text-[#e3e3e3]">Add New Account</span>
       </div>
       <i
-        class="fa-solid fa-chevron-down text-gray-400 text-xs transition-transform duration-200"
+        class="fa-solid fa-chevron-down text-[#999999] text-xs transition-transform duration-200"
         :class="{ 'rotate-180': open }"
       ></i>
     </button>

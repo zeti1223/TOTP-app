@@ -1,6 +1,6 @@
 <template>
   <div>
-    <label v-if="label" class="block text-sm font-medium text-gray-400 mb-1">
+    <label v-if="label" class="block text-sm font-medium text-[#999999] mb-1">
       {{ label }}
     </label>
     <input
@@ -10,15 +10,15 @@
       :required="required"
       :autocomplete="autocomplete"
       :spellcheck="spellcheck"
-      class="w-full bg-gray-800 border rounded-lg px-4 py-2.5 text-gray-100 placeholder-gray-600 focus:outline-none focus:ring-2 focus:ring-indigo-500 focus:border-transparent transition"
+      class="w-full bg-[#141414] border-2 rounded-lg px-4 py-2.5 text-[#e3e3e3] placeholder-[#999999] neo-input"
       :class="[
-        error ? 'border-red-500' : 'border-gray-700',
+        error ? 'border-[#f06595]' : 'border-[#333333]',
         inputClass
       ]"
       @input="onInput"
     />
-    <p v-if="error" class="mt-1 text-xs text-red-400">{{ error }}</p>
-    <p v-else-if="hint" class="mt-1 text-xs text-gray-600">{{ hint }}</p>
+    <p v-if="error" class="mt-1 text-xs text-[#f06595]">{{ error }}</p>
+    <p v-else-if="hint" class="mt-1 text-xs text-[#999999]">{{ hint }}</p>
   </div>
 </template>
 

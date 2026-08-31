@@ -1,19 +1,18 @@
 <template>
-  <div class="px-5 pb-5 border-t border-gray-800 pt-4 space-y-4">
-    <!-- Tab Switcher -->
-    <div class="flex rounded-xl bg-gray-950 p-1 border border-gray-800">
+  <div class="px-5 pb-5 border-t-2 border-[#333333] pt-4 space-y-4">
+    <div class="flex rounded-xl bg-[#121212] p-1 border-2 border-[#333333]">
       <button
         type="button"
         @click="activeTab = 'qr'"
         :class="[
           'flex-1 py-2 px-3 rounded-lg text-xs font-semibold transition flex items-center justify-center gap-2',
           activeTab === 'qr'
-            ? 'bg-indigo-600 text-white shadow-md'
-            : 'text-gray-400 hover:text-gray-200'
+            ? 'bg-[#6965db] text-white shadow-md'
+            : 'text-[#999999] hover:text-[#e3e3e3]'
         ]"
       >
         <i class="fa-solid fa-qrcode"></i>
-        <span>Scan QR Code</span>
+        <span>Scan QR</span>
       </button>
 
       <button
@@ -22,28 +21,26 @@
         :class="[
           'flex-1 py-2 px-3 rounded-lg text-xs font-semibold transition flex items-center justify-center gap-2',
           activeTab === 'manual'
-            ? 'bg-indigo-600 text-white shadow-md'
-            : 'text-gray-400 hover:text-gray-200'
+            ? 'bg-[#6965db] text-white shadow-md'
+            : 'text-[#999999] hover:text-[#e3e3e3]'
         ]"
       >
         <i class="fa-solid fa-keyboard"></i>
-        <span>Manual Entry</span>
+        <span>Manual</span>
       </button>
     </div>
 
-    <!-- QR Code Tab -->
     <div v-if="activeTab === 'qr'" class="space-y-4">
-      <!-- If scanned result exists, show review/confirmation form -->
       <div v-if="scannedResult" class="space-y-4">
-        <div class="flex items-center justify-between p-3 rounded-xl bg-emerald-950/40 border border-emerald-800/60 text-emerald-300 text-xs">
+        <div class="flex items-center justify-between p-3 rounded-xl bg-[#1e1e1e] border-2 border-[#12b886] text-[#12b886] text-xs">
           <div class="flex items-center gap-2">
-            <i class="fa-solid fa-circle-check text-emerald-400 text-sm"></i>
+            <i class="fa-solid fa-circle-check text-[#12b886] text-sm"></i>
             <span class="font-medium">QR code recognized!</span>
           </div>
           <button
             type="button"
             @click="resetScan"
-            class="text-emerald-400 hover:text-emerald-200 underline text-xs transition"
+            class="text-[#12b886] hover:text-[#12b886] underline text-xs transition"
           >
             Scan again
           </button>
@@ -53,7 +50,7 @@
           <BaseInput
             v-model="name"
             label="Account Name"
-            placeholder="e.g. GitHub, Google…"
+            placeholder="e.g. GitHub, Google"
             required
           />
 
@@ -70,18 +67,17 @@
             @input="validateSecret"
           />
 
-          <!-- Advanced params (read-only from QR) -->
           <div v-if="hasAdvancedParams" class="flex flex-wrap gap-2">
-            <span class="text-xs px-2 py-1 rounded-lg bg-gray-800 text-gray-400 border border-gray-700">
-              <i class="fa-solid fa-shield-halved mr-1 text-indigo-400"></i>{{ algorithm }}
+            <span class="text-xs px-2 py-1 rounded-lg bg-[#1e1e1e] text-[#999999] border-2 border-[#333333]">
+              <i class="fa-solid fa-shield-halved mr-1 text-[#6965db]"></i>{{ algorithm }}
             </span>
-            <span class="text-xs px-2 py-1 rounded-lg bg-gray-800 text-gray-400 border border-gray-700">
-              <i class="fa-solid fa-hashtag mr-1 text-indigo-400"></i>{{ digits }} digits
+            <span class="text-xs px-2 py-1 rounded-lg bg-[#1e1e1e] text-[#999999] border-2 border-[#333333]">
+              <i class="fa-solid fa-hashtag mr-1 text-[#6965db]"></i>{{ digits }} digits
             </span>
-            <span class="text-xs px-2 py-1 rounded-lg bg-gray-800 text-gray-400 border border-gray-700">
-              <i class="fa-regular fa-clock mr-1 text-indigo-400"></i>{{ period }}s interval
+            <span class="text-xs px-2 py-1 rounded-lg bg-[#1e1e1e] text-[#999999] border-2 border-[#333333]">
+              <i class="fa-regular fa-clock mr-1 text-[#6965db]"></i>{{ period }}s interval
             </span>
-            <span v-if="type === 'steam'" class="text-xs px-2 py-1 rounded-lg bg-blue-950/60 text-blue-300 border border-blue-800/60">
+            <span v-if="type === 'steam'" class="text-xs px-2 py-1 rounded-lg bg-[#1e1e1e] text-[#6965db] border-2 border-[#333333]">
               <i class="fa-brands fa-steam mr-1"></i>Steam Guard
             </span>
           </div>
@@ -90,14 +86,14 @@
             <button
               type="button"
               @click="resetScan"
-              class="flex-1 py-2.5 px-4 rounded-lg font-semibold text-sm transition bg-gray-800 hover:bg-gray-700 text-gray-300"
+              class="flex-1 py-2.5 px-4 rounded-lg font-semibold text-sm transition bg-[#1e1e1e] border-2 border-[#333333] text-[#999999] neo-button hover:text-[#e3e3e3]"
             >
               Cancel
             </button>
             <button
               type="submit"
               :disabled="!!secretError || !name || !secret"
-              class="flex-1 py-2.5 px-4 rounded-lg font-semibold text-sm transition flex items-center justify-center gap-2 bg-indigo-600 hover:bg-indigo-500 text-white disabled:opacity-40 disabled:cursor-not-allowed shadow-md"
+              class="flex-1 py-2.5 px-4 rounded-lg font-semibold text-sm transition flex items-center justify-center gap-2 bg-[#6965db] border-2 border-[#6965db] text-white disabled:opacity-40 disabled:cursor-not-allowed neo-button hover:bg-[#12b886] hover:border-[#12b886]"
             >
               <i class="fa-solid fa-plus text-xs"></i>
               <span>Save Account</span>
@@ -106,19 +102,17 @@
         </form>
       </div>
 
-      <!-- Otherwise show QrScanner -->
       <QrScanner
         v-else
         @scanned="handleScanned"
       />
     </div>
 
-    <!-- Manual Entry Tab -->
     <form v-else-if="activeTab === 'manual'" @submit.prevent="submit" class="space-y-4">
       <BaseInput
         v-model="name"
         label="Account Name"
-        placeholder="e.g. GitHub, Google, Discord…"
+        placeholder="e.g. GitHub, Google"
         required
       />
 
@@ -135,16 +129,15 @@
         @input="validateSecret"
       />
 
-      <!-- Account Type -->
       <div class="space-y-1.5">
-        <label class="block text-xs font-medium text-gray-400">Account Type</label>
-        <div class="flex rounded-lg bg-gray-950 p-0.5 border border-gray-800">
+        <label class="block text-xs font-medium text-[#999999]">Account Type</label>
+        <div class="flex rounded-lg bg-[#121212] p-0.5 border-2 border-[#333333]">
           <button
             type="button"
             @click="type = 'totp'"
             :class="[
               'flex-1 py-1.5 px-2 rounded-md text-xs font-semibold transition flex items-center justify-center gap-1.5',
-              type === 'totp' ? 'bg-indigo-600 text-white' : 'text-gray-400 hover:text-gray-200'
+              type === 'totp' ? 'bg-[#6965db] text-white' : 'text-[#999999] hover:text-[#e3e3e3]'
             ]"
           >
             <i class="fa-solid fa-key"></i>
@@ -155,38 +148,32 @@
             @click="type = 'steam'"
             :class="[
               'flex-1 py-1.5 px-2 rounded-md text-xs font-semibold transition flex items-center justify-center gap-1.5',
-              type === 'steam' ? 'bg-blue-700 text-white' : 'text-gray-400 hover:text-gray-200'
+              type === 'steam' ? 'bg-[#6965db] text-white' : 'text-[#999999] hover:text-[#e3e3e3]'
             ]"
           >
             <i class="fa-brands fa-steam"></i>
             Steam Guard
           </button>
         </div>
-        <p v-if="type === 'steam'" class="text-xs text-blue-400/80">
-          Steam Guard uses 5-character alphanumeric codes with a fixed 30s interval.
-        </p>
       </div>
 
-      <!-- Advanced Settings (only for TOTP) -->
       <div v-if="type === 'totp'" class="space-y-1">
         <button
           type="button"
           @click="showAdvanced = !showAdvanced"
-          class="flex items-center gap-1.5 text-xs text-gray-500 hover:text-gray-300 transition w-full text-left py-1"
+          class="flex items-center gap-1.5 text-xs text-[#999999] hover:text-[#e3e3e3] transition w-full text-left py-1"
         >
           <i
             class="fa-solid fa-chevron-right text-[10px] transition-transform"
             :class="{ 'rotate-90': showAdvanced }"
           ></i>
           Advanced Settings
-          <span v-if="hasNonDefaultParams" class="ml-1 px-1.5 py-0.5 rounded bg-indigo-600/30 text-indigo-300 text-[10px] font-medium">Modified</span>
         </button>
 
-        <div v-if="showAdvanced" class="bg-gray-950 border border-gray-800 rounded-xl p-3 space-y-3">
-          <!-- Algorithm -->
+        <div v-if="showAdvanced" class="bg-[#121212] border-2 border-[#333333] rounded-xl p-3 space-y-3">
           <div class="space-y-1">
-            <label class="block text-xs font-medium text-gray-400">HMAC Algorithm</label>
-            <div class="flex rounded-lg bg-gray-900 p-0.5 border border-gray-800 gap-0.5">
+            <label class="block text-xs font-medium text-[#999999]">HMAC Algorithm</label>
+            <div class="flex rounded-lg bg-[#1e1e1e] p-0.5 border-2 border-[#333333] gap-0.5">
               <button
                 v-for="alg in ['SHA-1', 'SHA-256', 'SHA-512']"
                 :key="alg"
@@ -194,22 +181,21 @@
                 @click="algorithm = alg"
                 :class="[
                   'flex-1 py-1.5 px-1 rounded-md text-[11px] font-semibold transition',
-                  algorithm === alg ? 'bg-indigo-600 text-white' : 'text-gray-400 hover:text-gray-200'
+                  algorithm === alg ? 'bg-[#6965db] text-white' : 'text-[#999999] hover:text-[#e3e3e3]'
                 ]"
               >{{ alg }}</button>
             </div>
           </div>
 
-          <!-- Code Length -->
           <div class="space-y-1">
-            <label class="block text-xs font-medium text-gray-400">Code Length</label>
-            <div class="flex rounded-lg bg-gray-900 p-0.5 border border-gray-800 gap-0.5">
+            <label class="block text-xs font-medium text-[#999999]">Code Length</label>
+            <div class="flex rounded-lg bg-[#1e1e1e] p-0.5 border-2 border-[#333333] gap-0.5">
               <button
                 type="button"
                 @click="digits = 6"
                 :class="[
                   'flex-1 py-1.5 px-2 rounded-md text-xs font-semibold transition',
-                  digits === 6 ? 'bg-indigo-600 text-white' : 'text-gray-400 hover:text-gray-200'
+                  digits === 6 ? 'bg-[#6965db] text-white' : 'text-[#999999] hover:text-[#e3e3e3]'
                 ]"
               >6 digits</button>
               <button
@@ -217,22 +203,21 @@
                 @click="digits = 8"
                 :class="[
                   'flex-1 py-1.5 px-2 rounded-md text-xs font-semibold transition',
-                  digits === 8 ? 'bg-indigo-600 text-white' : 'text-gray-400 hover:text-gray-200'
+                  digits === 8 ? 'bg-[#6965db] text-white' : 'text-[#999999] hover:text-[#e3e3e3]'
                 ]"
               >8 digits</button>
             </div>
           </div>
 
-          <!-- Interval -->
           <div class="space-y-1">
-            <label class="block text-xs font-medium text-gray-400">Refresh Interval</label>
-            <div class="flex rounded-lg bg-gray-900 p-0.5 border border-gray-800 gap-0.5">
+            <label class="block text-xs font-medium text-[#999999]">Refresh Interval</label>
+            <div class="flex rounded-lg bg-[#1e1e1e] p-0.5 border-2 border-[#333333] gap-0.5">
               <button
                 type="button"
                 @click="setPresetPeriod(30)"
                 :class="[
                   'flex-1 py-1.5 px-2 rounded-md text-xs font-semibold transition',
-                  period === 30 && !customPeriodActive ? 'bg-indigo-600 text-white' : 'text-gray-400 hover:text-gray-200'
+                  period === 30 && !customPeriodActive ? 'bg-[#6965db] text-white' : 'text-[#999999] hover:text-[#e3e3e3]'
                 ]"
               >30s</button>
               <button
@@ -240,7 +225,7 @@
                 @click="setPresetPeriod(60)"
                 :class="[
                   'flex-1 py-1.5 px-2 rounded-md text-xs font-semibold transition',
-                  period === 60 && !customPeriodActive ? 'bg-indigo-600 text-white' : 'text-gray-400 hover:text-gray-200'
+                  period === 60 && !customPeriodActive ? 'bg-[#6965db] text-white' : 'text-[#999999] hover:text-[#e3e3e3]'
                 ]"
               >60s</button>
               <button
@@ -248,7 +233,7 @@
                 @click="customPeriodActive = true"
                 :class="[
                   'flex-1 py-1.5 px-2 rounded-md text-xs font-semibold transition',
-                  customPeriodActive ? 'bg-indigo-600 text-white' : 'text-gray-400 hover:text-gray-200'
+                  customPeriodActive ? 'bg-[#6965db] text-white' : 'text-[#999999] hover:text-[#e3e3e3]'
                 ]"
               >Custom</button>
             </div>
@@ -258,7 +243,7 @@
               type="number"
               min="10"
               max="300"
-              class="w-full bg-gray-800 border border-gray-700 rounded-lg px-3 py-1.5 text-sm text-gray-100 focus:outline-none focus:border-indigo-500 focus:ring-1 focus:ring-indigo-500 transition"
+              class="w-full bg-[#141414] border-2 border-[#333333] rounded-lg px-3 py-1.5 text-sm text-[#e3e3e3] neo-input"
               placeholder="Seconds (10–300)"
             />
           </div>
@@ -268,7 +253,7 @@
       <button
         type="submit"
         :disabled="!!secretError || !name || !secret"
-        class="w-full py-2.5 px-4 rounded-lg font-semibold text-sm transition flex items-center justify-center gap-2 bg-indigo-600 hover:bg-indigo-500 text-white disabled:opacity-40 disabled:cursor-not-allowed"
+        class="w-full py-2.5 px-4 rounded-lg font-semibold text-sm transition flex items-center justify-center gap-2 bg-[#6965db] border-2 border-[#6965db] text-white disabled:opacity-40 disabled:cursor-not-allowed neo-button hover:bg-[#12b886] hover:border-[#12b886]"
       >
         <i class="fa-solid fa-plus text-xs"></i>
         <span>Add Account</span>
@@ -285,15 +270,14 @@ import { validateBase32 } from '../totp.js'
 
 const emit = defineEmits(['add-account', 'submitted'])
 
-const activeTab = ref('qr') // 'qr' | 'manual'
+const activeTab = ref('qr')
 const scannedResult = ref(null)
 
 const name = ref('')
 const secret = ref('')
 const secretError = ref('')
 
-// Advanced TOTP params
-const type = ref('totp')         // 'totp' | 'steam'
+const type = ref('totp')
 const algorithm = ref('SHA-1')
 const digits = ref(6)
 const period = ref(30)
@@ -304,10 +288,6 @@ const BASE32_RE = /^[A-Z2-7]+=*$/
 
 const hasAdvancedParams = computed(() =>
   algorithm.value !== 'SHA-1' || digits.value !== 6 || period.value !== 30 || type.value === 'steam'
-)
-
-const hasNonDefaultParams = computed(() =>
-  algorithm.value !== 'SHA-1' || digits.value !== 6 || period.value !== 30
 )
 
 function validateSecret() {
@@ -366,7 +346,6 @@ function submit() {
     createdAt: Date.now(),
   }
 
-  // Only add TOTP-specific params if not Steam
   if (type.value !== 'steam') {
     account.algorithm = algorithm.value
     account.digits = digits.value

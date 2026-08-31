@@ -1,16 +1,3 @@
-/**
- * TOTP implementation using browser native Web Crypto API
- * RFC 4226 (HOTP) + RFC 6238 (TOTP)
- * No Node.js Buffer dependency
- *
- * Supports:
- * - SHA-1 / SHA-256 / SHA-512 algorithms
- * - 6 or 8 digit codes
- * - Configurable period (30s, 60s, custom)
- * - Steam Guard 5-character alphanumeric codes
- */
-
-// Base32 decoding
 const BASE32_CHARS = 'ABCDEFGHIJKLMNOPQRSTUVWXYZ234567'
 
 export function base32Decode(input) {
@@ -33,12 +20,6 @@ export function base32Decode(input) {
   return new Uint8Array(output)
 }
 
-/**
- * HMAC using Web Crypto API – supports SHA-1, SHA-256, SHA-512
- * @param {Uint8Array} keyBytes
- * @param {Uint8Array} dataBytes
- * @param {'SHA-1'|'SHA-256'|'SHA-512'} algorithm
- */
 async function hmacHash(keyBytes, dataBytes, algorithm = 'SHA-1') {
   const cryptoKey = await crypto.subtle.importKey(
     'raw',
@@ -51,29 +32,17 @@ async function hmacHash(keyBytes, dataBytes, algorithm = 'SHA-1') {
   return new Uint8Array(signature)
 }
 
-/**
- * Returns the last byte index for dynamic truncation offset lookup based on HMAC length.
- * SHA-1 → 20 bytes, SHA-256 → 32 bytes, SHA-512 → 64 bytes
- */
 function hmacLastByteIndex(algorithm) {
   switch (algorithm) {
     case 'SHA-256': return 31
     case 'SHA-512': return 63
-    default: return 19 // SHA-1
+    default: return 19
   }
 }
 
-/**
- * HOTP (RFC 4226) – HMAC-based One-Time Password
- * @param {string} secret - Base32 encoded secret
- * @param {number} counter
- * @param {number} digits - 6 or 8
- * @param {'SHA-1'|'SHA-256'|'SHA-512'} algorithm
- */
 async function hotp(secret, counter, digits = 6, algorithm = 'SHA-1') {
   const keyBytes = base32Decode(secret)
 
-  // Counter → 8-byte big-endian
   const counterBytes = new Uint8Array(8)
   let c = BigInt(counter)
   for (let i = 7; i >= 0; i--) {
@@ -83,7 +52,6 @@ async function hotp(secret, counter, digits = 6, algorithm = 'SHA-1') {
 
   const hmac = await hmacHash(keyBytes, counterBytes, algorithm)
 
-  // Dynamic truncation
   const lastByte = hmacLastByteIndex(algorithm)
   const offset = hmac[lastByte] & 0x0f
   const code =
@@ -96,14 +64,6 @@ async function hotp(secret, counter, digits = 6, algorithm = 'SHA-1') {
   return String(code % mod).padStart(digits, '0')
 }
 
-/**
- * TOTP (RFC 6238) – Time-based One-Time Password
- * @param {string} secret - Base32 encoded secret
- * @param {number} period - Time step in seconds (default 30)
- * @param {number} stepOffset - Time step offset (0 = current, 1 = next)
- * @param {number} digits - Number of digits (6 or 8)
- * @param {'SHA-1'|'SHA-256'|'SHA-512'} algorithm
- */
 export async function generateTotp(
   secret,
   period = 30,
@@ -115,12 +75,6 @@ export async function generateTotp(
   return hotp(secret, timeStep, digits, algorithm)
 }
 
-/**
- * Steam Guard – generates a 5-character alphanumeric code.
- * Uses HMAC-SHA1 with the standard Steam alphabet.
- * @param {string} secret - Base32 encoded secret
- * @param {number} stepOffset - 0 = current, 1 = next
- */
 const STEAM_ALPHABET = '23456789BCDFGHJKMNPQRTVWXY'
 
 export async function generateSteamCode(secret, stepOffset = 0) {
@@ -128,7 +82,6 @@ export async function generateSteamCode(secret, stepOffset = 0) {
   const timeStep = Math.floor(Date.now() / 1000 / period) + stepOffset
   const keyBytes = base32Decode(secret)
 
-  // Counter → 8-byte big-endian
   const counterBytes = new Uint8Array(8)
   let c = BigInt(timeStep)
   for (let i = 7; i >= 0; i--) {
@@ -138,7 +91,6 @@ export async function generateSteamCode(secret, stepOffset = 0) {
 
   const hmac = await hmacHash(keyBytes, counterBytes, 'SHA-1')
 
-  // Steam-specific truncation
   const offset = hmac[19] & 0x0f
   let fullCode =
     ((hmac[offset] & 0x7f) << 24) |
@@ -155,20 +107,15 @@ export async function generateSteamCode(secret, stepOffset = 0) {
   return steamCode
 }
 
-// Validates whether the secret key can be decoded
 export function validateBase32(secret) {
   try {
     const bytes = base32Decode(secret)
-    return bytes.length >= 10 // min 80 bit
+    return bytes.length >= 10
   } catch {
     return false
   }
 }
 
-/**
- * Account default values for backward compatibility.
- * Existing accounts without these fields will use these defaults.
- */
 export function getAccountDefaults() {
   return {
     algorithm: 'SHA-1',
@@ -178,12 +125,6 @@ export function getAccountDefaults() {
   }
 }
 
-/**
- * Builds an otpauth:// URI from an account object.
- * Used for QR code regeneration / device transfer.
- * @param {Object} account - Account object with name, secret, issuer, algorithm, digits, period, type
- * @returns {string} otpauth:// URI
- */
 export function buildOtpAuthUri(account) {
   const defaults = getAccountDefaults()
   const type = account.type === 'steam' ? 'totp' : (account.type || 'totp')
@@ -202,15 +143,10 @@ export function buildOtpAuthUri(account) {
   return uri
 }
 
-/**
- * Parses otpauth:// URI or raw secret string from QR code
- * Returns { name, secret, issuer, account, algorithm, digits, period, type } or null if invalid
- */
 export function parseOtpAuth(data) {
   if (!data || typeof data !== 'string') return null
   const trimmed = data.trim()
 
-  // Case 1: Plain Base32 string (without URI scheme)
   const cleanPotentialBase32 = trimmed.replace(/\s/g, '').toUpperCase()
   if (/^[A-Z2-7]+=*$/.test(cleanPotentialBase32) && validateBase32(cleanPotentialBase32)) {
     return {
@@ -225,7 +161,6 @@ export function parseOtpAuth(data) {
     }
   }
 
-  // Case 2: otpauth:// URI
   if (!trimmed.toLowerCase().startsWith('otpauth://')) {
     return null
   }
@@ -237,7 +172,6 @@ export function parseOtpAuth(data) {
     const uriType = url.hostname.toLowerCase()
     if (uriType !== 'totp' && uriType !== 'hotp') return null
 
-    // Extract path (e.g. "/GitHub:alice@gmail.com" or "/alice@gmail.com")
     let rawPath = decodeURIComponent(url.pathname.replace(/^\/+/, ''))
     let issuer = url.searchParams.get('issuer') || ''
     const secret = url.searchParams.get('secret')
@@ -247,7 +181,6 @@ export function parseOtpAuth(data) {
     const cleanSecret = secret.replace(/\s/g, '').toUpperCase()
     if (!validateBase32(cleanSecret)) return null
 
-    // Parse extended parameters
     const rawAlgorithm = (url.searchParams.get('algorithm') || 'SHA-1').toUpperCase()
     const validAlgorithms = ['SHA-1', 'SHA-256', 'SHA-512']
     const algorithm = validAlgorithms.includes(rawAlgorithm) ? rawAlgorithm : 'SHA-1'

@@ -1,19 +1,18 @@
 <template>
   <div class="space-y-4">
-    <!-- Scanner mode switch -->
-    <div class="flex rounded-lg bg-gray-950/60 p-1 border border-gray-800">
+    <div class="flex rounded-lg bg-[#121212] p-1 border-2 border-[#333333]">
       <button
         type="button"
         @click="mode = 'camera'"
         :class="[
           'flex-1 py-1.5 px-3 rounded-md text-xs font-medium transition flex items-center justify-center gap-2',
           mode === 'camera'
-            ? 'bg-indigo-600 text-white shadow-sm'
-            : 'text-gray-400 hover:text-gray-200'
+            ? 'bg-[#6965db] text-white shadow-sm'
+            : 'text-[#999999] hover:text-[#e3e3e3]'
         ]"
       >
         <i class="fa-solid fa-camera"></i>
-        <span>Live Camera</span>
+        <span>Camera</span>
       </button>
 
       <button
@@ -22,110 +21,59 @@
         :class="[
           'flex-1 py-1.5 px-3 rounded-md text-xs font-medium transition flex items-center justify-center gap-2',
           mode === 'file'
-            ? 'bg-indigo-600 text-white shadow-sm'
-            : 'text-gray-400 hover:text-gray-200'
+            ? 'bg-[#6965db] text-white shadow-sm'
+            : 'text-[#999999] hover:text-[#e3e3e3]'
         ]"
       >
         <i class="fa-solid fa-file-image"></i>
-        <span>Upload / Paste Image</span>
+        <span>Upload</span>
       </button>
     </div>
 
-    <!-- Live Camera View -->
-    <div v-show="mode === 'camera'" class="space-y-3">
-      <div
-        class="relative w-full aspect-[4/3] bg-black rounded-xl overflow-hidden border border-gray-800 flex items-center justify-center"
-      >
-        <video
-          ref="videoEl"
-          playsinline
-          muted
-          class="w-full h-full object-cover"
-        ></video>
-
-        <!-- Hidden canvas for QR image analysis -->
+    <div v-if="mode === 'camera'" class="space-y-3">
+      <div class="relative w-full aspect-[4/3] bg-black rounded-xl overflow-hidden border-2 border-[#333333]">
+        <video ref="videoEl" playsinline muted class="w-full h-full object-cover" style="transform: scaleX(-1);"></video>
         <canvas ref="canvasEl" class="hidden"></canvas>
 
-        <!-- Viewfinder Reticle Overlay -->
-        <div
-          v-if="isScanning && !cameraError"
-          class="absolute inset-0 pointer-events-none flex items-center justify-center p-6"
-        >
-          <div class="relative w-48 h-48 sm:w-56 sm:h-56 rounded-2xl border-2 border-indigo-500/40">
-            <!-- Reticle Corners -->
-            <div class="absolute -top-0.5 -left-0.5 w-5 h-5 border-t-2 border-l-2 border-indigo-400 rounded-tl-lg"></div>
-            <div class="absolute -top-0.5 -right-0.5 w-5 h-5 border-t-2 border-r-2 border-indigo-400 rounded-tr-lg"></div>
-            <div class="absolute -bottom-0.5 -left-0.5 w-5 h-5 border-b-2 border-l-2 border-indigo-400 rounded-bl-lg"></div>
-            <div class="absolute -bottom-0.5 -right-0.5 w-5 h-5 border-b-2 border-r-2 border-indigo-400 rounded-br-lg"></div>
-
-            <!-- Animated Laser Scan Line -->
-            <div class="scan-laser"></div>
-          </div>
-        </div>
-
-        <!-- Camera Loading State -->
-        <div
-          v-if="cameraLoading"
-          class="absolute inset-0 bg-gray-950/80 backdrop-blur-xs flex flex-col items-center justify-center gap-2 text-gray-300"
-        >
-          <i class="fa-solid fa-spinner fa-spin text-2xl text-indigo-400"></i>
+        <div v-if="cameraLoading" class="absolute inset-0 bg-[#121212]/80 flex items-center justify-center gap-2 text-[#e3e3e3]">
+          <i class="fa-solid fa-spinner fa-spin text-xl text-[#6965db]"></i>
           <span class="text-xs">Starting camera...</span>
         </div>
 
-        <!-- Camera Error State -->
-        <div
-          v-if="cameraError"
-          class="absolute inset-0 bg-gray-950/95 flex flex-col items-center justify-center p-5 text-center gap-3 text-gray-300"
-        >
-          <div class="w-10 h-10 rounded-full bg-red-950/80 border border-red-800/60 flex items-center justify-center text-red-400">
+        <div v-if="cameraError" class="absolute inset-0 bg-[#121212]/95 flex flex-col items-center justify-center p-5 text-center gap-3 text-[#e3e3e3]">
+          <div class="w-10 h-10 rounded-full bg-[#1e1e1e] border-2 border-[#f06595] flex items-center justify-center text-[#f06595]">
             <i class="fa-solid fa-video-slash"></i>
           </div>
-          <p class="text-xs text-red-300 max-w-xs">{{ cameraError }}</p>
+          <p class="text-xs text-[#f06595] max-w-xs">{{ cameraError }}</p>
           <button
             type="button"
             @click="startCamera"
-            class="px-3 py-1.5 bg-gray-800 hover:bg-gray-700 text-xs text-gray-200 font-medium rounded-lg transition border border-gray-700"
+            class="px-3 py-1.5 bg-[#1e1e1e] border-2 border-[#333333] hover:bg-[#1e1e1e] text-xs text-[#999999] font-medium rounded-lg neo-button"
           >
-            <i class="fa-solid fa-rotate-right mr-1.5"></i> Retry
+            Retry
           </button>
         </div>
       </div>
 
-      <!-- Camera Controls -->
-      <div v-if="!cameraError && !cameraLoading" class="flex items-center justify-between text-xs text-gray-400 px-1">
+      <div v-if="!cameraError && !cameraLoading" class="flex items-center justify-between text-xs text-[#999999] px-1">
         <span class="flex items-center gap-1.5">
-          <span class="w-2 h-2 rounded-full bg-emerald-500 animate-pulse"></span>
-          Point camera at QR code
+          <span class="w-2 h-2 rounded-full bg-[#12b886] animate-pulse"></span>
+          Point at QR code
         </span>
-
-        <div class="flex items-center gap-2">
-          <!-- Switch Camera Button (if multiple devices) -->
-          <button
-            v-if="videoDevices.length > 1"
-            type="button"
-            @click="switchCamera"
-            class="px-2.5 py-1 rounded bg-gray-800 hover:bg-gray-700 text-gray-300 transition flex items-center gap-1.5"
-            title="Switch camera"
-          >
-            <i class="fa-solid fa-arrows-rotate text-xs"></i>
-            <span>Switch camera</span>
-          </button>
-        </div>
       </div>
     </div>
 
-    <!-- Upload / Paste Image View -->
-    <div v-show="mode === 'file'" class="space-y-3">
+    <div v-if="mode === 'file'" class="space-y-3">
       <div
         @dragover.prevent="isDragging = true"
         @dragleave.prevent="isDragging = false"
         @drop.prevent="handleDrop"
         @click="triggerFileInput"
         :class="[
-          'relative w-full aspect-[4/3] rounded-xl border-2 border-dashed transition flex flex-col items-center justify-center p-6 text-center cursor-pointer select-none',
+          'relative w-full aspect-[4/3] rounded-xl border-2 border-dashed transition flex flex-col items-center justify-center p-6 text-center cursor-pointer',
           isDragging
-            ? 'border-indigo-500 bg-indigo-950/20'
-            : 'border-gray-800 hover:border-gray-700 bg-gray-950/40 hover:bg-gray-950/60'
+            ? 'border-[#6965db] bg-[#121212]/20'
+            : 'border-[#333333] hover:border-[#333333] bg-[#121212]/40'
         ]"
       >
         <input
@@ -136,33 +84,25 @@
           @change="handleFileSelected"
         />
 
-        <div class="w-12 h-12 rounded-xl bg-gray-900 border border-gray-800 flex items-center justify-center text-indigo-400 mb-3 group-hover:scale-105 transition">
+        <div class="w-12 h-12 rounded-xl bg-[#1e1e1e] border-2 border-[#333333] flex items-center justify-center text-[#6965db] mb-3">
           <i class="fa-solid fa-qrcode text-xl"></i>
         </div>
 
-        <p class="text-sm font-medium text-gray-200 mb-1">
-          Drop QR code image here or <span class="text-indigo-400 underline">browse</span>
+        <p class="text-sm font-medium text-[#e3e3e3] mb-1">
+          Drop image or <span class="text-[#6965db] underline">browse</span>
         </p>
-        <p class="text-xs text-gray-400 max-w-xs">
-          Supports PNG, JPG, WebP. You can also press <kbd class="px-1.5 py-0.5 bg-gray-800 border border-gray-700 rounded text-[10px] text-gray-300 font-mono">Ctrl+V</kbd> to paste a screenshot.
+        <p class="text-xs text-[#999999]">
+          Supports PNG, JPG. Press Ctrl+V to paste.
         </p>
 
-        <!-- Image Processing Loading -->
-        <div
-          v-if="fileLoading"
-          class="absolute inset-0 bg-gray-950/80 backdrop-blur-xs flex flex-col items-center justify-center gap-2 text-gray-300 rounded-xl"
-        >
-          <i class="fa-solid fa-spinner fa-spin text-2xl text-indigo-400"></i>
-          <span class="text-xs">Analyzing image...</span>
+        <div v-if="fileLoading" class="absolute inset-0 bg-[#121212]/80 flex items-center justify-center gap-2 text-[#e3e3e3] rounded-xl">
+          <i class="fa-solid fa-spinner fa-spin text-xl text-[#6965db]"></i>
+          <span class="text-xs">Scanning...</span>
         </div>
       </div>
     </div>
 
-    <!-- General Error Banner -->
-    <div
-      v-if="scanError"
-      class="flex items-center gap-2 px-3 py-2 bg-red-950/50 border border-red-800/60 rounded-lg text-xs text-red-300"
-    >
+    <div v-if="scanError" class="flex items-center gap-2 px-3 py-2 bg-[#1e1e1e] border-2 border-[#f06595] rounded-lg text-xs text-[#f06595]">
       <i class="fa-solid fa-circle-exclamation shrink-0"></i>
       <span>{{ scanError }}</span>
     </div>
@@ -176,7 +116,7 @@ import { parseOtpAuth } from '../totp.js'
 
 const emit = defineEmits(['scanned'])
 
-const mode = ref('camera') // 'camera' | 'file'
+const mode = ref('camera')
 const videoEl = ref(null)
 const canvasEl = ref(null)
 const fileInputEl = ref(null)
@@ -188,12 +128,9 @@ const scanError = ref('')
 const fileLoading = ref(false)
 const isDragging = ref(false)
 
-const videoDevices = ref([])
-const currentDeviceIndex = ref(0)
 let mediaStream = null
 let animationFrameId = null
 
-// Watch mode changes to start/stop camera
 watch(mode, (newMode) => {
   scanError.value = ''
   if (newMode === 'camera') {
@@ -203,16 +140,6 @@ watch(mode, (newMode) => {
   }
 })
 
-async function enumerateCameras() {
-  try {
-    if (!navigator.mediaDevices?.enumerateDevices) return
-    const devices = await navigator.mediaDevices.enumerateDevices()
-    videoDevices.value = devices.filter((d) => d.kind === 'videoinput')
-  } catch {
-    // Non-critical, ignore
-  }
-}
-
 async function startCamera() {
   stopCamera()
   cameraError.value = ''
@@ -221,23 +148,11 @@ async function startCamera() {
 
   try {
     if (!navigator.mediaDevices || !navigator.mediaDevices.getUserMedia) {
-      throw new Error('Camera access is not supported by your browser or environment (requires HTTPS/localhost).')
-    }
-
-    await enumerateCameras()
-
-    let videoConstraints = {
-      facingMode: { ideal: 'environment' },
-    }
-
-    if (videoDevices.value.length > 0 && videoDevices.value[currentDeviceIndex.value]?.deviceId) {
-      videoConstraints = {
-        deviceId: { exact: videoDevices.value[currentDeviceIndex.value].deviceId },
-      }
+      throw new Error('Camera not supported')
     }
 
     mediaStream = await navigator.mediaDevices.getUserMedia({
-      video: videoConstraints,
+      video: { facingMode: 'environment' },
       audio: false,
     })
 
@@ -253,13 +168,7 @@ async function startCamera() {
   } catch (err) {
     cameraLoading.value = false
     isScanning.value = false
-    if (err.name === 'NotAllowedError' || err.name === 'PermissionDeniedError') {
-      cameraError.value = 'Camera permission was denied. Please allow camera access in your browser.'
-    } else if (err.name === 'NotFoundError' || err.name === 'DevicesNotFoundError') {
-      cameraError.value = 'No camera found on your device.'
-    } else {
-      cameraError.value = err.message || 'Unable to access camera.'
-    }
+    cameraError.value = err.message || 'Unable to access camera'
   }
 }
 
@@ -278,12 +187,6 @@ function stopCamera() {
   }
 }
 
-function switchCamera() {
-  if (videoDevices.value.length <= 1) return
-  currentDeviceIndex.value = (currentDeviceIndex.value + 1) % videoDevices.value.length
-  startCamera()
-}
-
 function scanFrame() {
   if (!isScanning.value || !videoEl.value || !canvasEl.value) return
 
@@ -297,12 +200,13 @@ function scanFrame() {
     if (width > 0 && height > 0) {
       canvas.width = width
       canvas.height = height
+      ctx.translate(width, 0)
+      ctx.scale(-1, 1)
       ctx.drawImage(videoEl.value, 0, 0, width, height)
+      ctx.setTransform(1, 0, 0, 1, 0, 0)
 
       const imageData = ctx.getImageData(0, 0, width, height)
-      const code = jsQR(imageData.data, imageData.width, imageData.height, {
-        inversionAttempts: 'dontInvert',
-      })
+      const code = jsQR(imageData.data, imageData.width, imageData.height)
 
       if (code && code.data) {
         const parsed = parseOtpAuth(code.data)
@@ -311,7 +215,7 @@ function scanFrame() {
           emit('scanned', parsed)
           return
         } else {
-          scanError.value = 'Found QR code, but it is not a valid TOTP (otpauth://) code.'
+          scanError.value = 'Invalid TOTP code'
         }
       }
     }
@@ -340,7 +244,7 @@ function handleDrop(event) {
   if (file && file.type.startsWith('image/')) {
     processImageFile(file)
   } else {
-    scanError.value = 'Please drop an image file.'
+    scanError.value = 'Please drop an image file'
   }
 }
 
@@ -375,9 +279,7 @@ function processImageFile(file) {
       ctx.drawImage(img, 0, 0)
 
       const imageData = ctx.getImageData(0, 0, img.width, img.height)
-      const code = jsQR(imageData.data, imageData.width, imageData.height, {
-        inversionAttempts: 'attemptBoth',
-      })
+      const code = jsQR(imageData.data, imageData.width, imageData.height)
 
       fileLoading.value = false
 
@@ -386,21 +288,21 @@ function processImageFile(file) {
         if (parsed) {
           emit('scanned', parsed)
         } else {
-          scanError.value = 'QR code detected, but it does not contain a valid TOTP key or otpauth:// URI.'
+          scanError.value = 'Invalid TOTP code'
         }
       } else {
-        scanError.value = 'No QR code could be found in the image. Please try a clearer picture.'
+        scanError.value = 'No QR code found'
       }
     }
     img.onerror = () => {
       fileLoading.value = false
-      scanError.value = 'Failed to load image file.'
+      scanError.value = 'Failed to load image'
     }
     img.src = e.target.result
   }
   reader.onerror = () => {
     fileLoading.value = false
-    scanError.value = 'Failed to read file.'
+    scanError.value = 'Failed to read file'
   }
   reader.readAsDataURL(file)
 }
@@ -417,26 +319,3 @@ onUnmounted(() => {
   stopCamera()
 })
 </script>
-
-<style scoped>
-.scan-laser {
-  position: absolute;
-  left: 0;
-  right: 0;
-  height: 2px;
-  background: linear-gradient(90deg, transparent, #818cf8, #6366f1, #818cf8, transparent);
-  box-shadow: 0 0 8px #6366f1;
-  animation: scan 2s linear infinite alternate;
-}
-
-@keyframes scan {
-  0% {
-    top: 5%;
-    opacity: 0.8;
-  }
-  100% {
-    top: 95%;
-    opacity: 0.8;
-  }
-}
-</style>

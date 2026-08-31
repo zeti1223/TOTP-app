@@ -1,5 +1,6 @@
 <template>
   <div
+    @click.stop
     class="w-9 h-9 rounded-full flex items-center justify-center text-sm font-bold flex-shrink-0"
     :style="{ backgroundColor: avatarColor + '33', color: avatarColor }"
   >
@@ -17,7 +18,7 @@ const props = defineProps({
   },
 })
 
-const COLORS = ['#818cf8', '#34d399', '#f472b6', '#fb923c', '#38bdf8', '#a78bfa', '#4ade80']
+const COLORS = ['#6965db', '#12b886', '#f06595', '#ff922b', '#38bdf8', '#a78bfa', '#4ade80']
 
 const initialLetter = computed(() => {
   return props.name ? props.name.charAt(0).toUpperCase() : '?'

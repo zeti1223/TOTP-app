@@ -1,8 +1,8 @@
 <template>
   <button
-    @click="$emit('delete')"
+    @click.stop="$emit('delete')"
     title="Delete account"
-    class="opacity-0 group-hover:opacity-100 text-gray-600 hover:text-red-400 transition-all p-1.5 -mr-1 rounded-lg hover:bg-red-400/10 flex-shrink-0"
+    class="text-[#999999] hover:text-[#f06595] transition-all p-1.5 -mr-1 rounded-lg bg-[#1e1e1e] border-2 border-[#333333] neo-button flex-shrink-0"
   >
     <i class="fa-solid fa-trash-can text-sm block"></i>
   </button>

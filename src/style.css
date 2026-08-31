@@ -3,8 +3,30 @@
 @tailwind utilities;
 
 @layer base {
+  :root {
+    --bg-color: #121212;
+    --card-bg: #1e1e1e;
+    --card-border: #333333;
+    --text-main: #e3e3e3;
+    --text-muted: #999999;
+    --accent-purple: #6965db;
+    --accent-teal: #12b886;
+    --accent-orange: #ff922b;
+    --accent-pink: #f06595;
+    --shadow-offset: 4px 4px 0px #000000;
+    --shadow-hover: 6px 6px 0px var(--accent-purple);
+    --font-hand: 'Patrick Hand', cursive, sans-serif;
+    --font-body: 'Inter', sans-serif;
+  }
+
   body {
-    @apply bg-gray-950 text-gray-100 min-h-screen;
+    @apply min-h-screen;
+    background-color: var(--bg-color);
+    color: var(--text-main);
+    font-family: var(--font-body);
+    background-image: radial-gradient(rgba(255, 255, 255, 0.12) 1.5px, transparent 1.5px);
+    background-size: 24px 24px;
+    user-select: none;
   }
 }
 
@@ -12,5 +34,48 @@
   .totp-code {
     font-variant-numeric: tabular-nums;
     letter-spacing: 0.15em;
+  }
+
+  .neo-shadow {
+    box-shadow: var(--shadow-offset);
+  }
+
+  .neo-shadow-hover:hover {
+    box-shadow: var(--shadow-hover);
+    transform: translate(-2px, -2px);
+  }
+
+  .neo-border {
+    border: 2px solid var(--card-border);
+  }
+
+  .neo-card {
+    background: var(--card-bg);
+    border: 2px solid var(--card-border);
+    box-shadow: var(--shadow-offset);
+  }
+
+  .neo-button {
+    box-shadow: 2px 2px 0px #000;
+    transition: all 0.2s ease;
+  }
+
+  .neo-button:hover {
+    transform: translate(-1px, -1px);
+    box-shadow: 3px 3px 0px var(--accent-purple);
+  }
+
+  .neo-input {
+    background: #141414;
+    border: 2px solid var(--card-border);
+    box-shadow: 2px 2px 0px #000;
+    transition: all 0.2s ease;
+  }
+
+  .neo-input:focus {
+    outline: none;
+    border-color: var(--accent-purple);
+    box-shadow: 2px 2px 0px var(--accent-purple);
+    transform: translate(-1px, -1px);
   }
 }

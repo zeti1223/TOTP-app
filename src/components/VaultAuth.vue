@@ -1,19 +1,19 @@
 <template>
   <div class="max-w-md mx-auto px-4 py-12">
-    <div class="bg-gray-900 border border-gray-800 rounded-2xl p-6 md:p-8 shadow-2xl relative overflow-hidden">
+    <div class="bg-[#1e1e1e] border-2 border-[#333333] rounded-2xl p-6 md:p-8 neo-shadow relative overflow-hidden">
       <!-- Glow background effect -->
-      <div class="absolute -top-24 -left-24 w-48 h-48 bg-indigo-500/10 rounded-full blur-3xl pointer-events-none"></div>
-      <div class="absolute -bottom-24 -right-24 w-48 h-48 bg-purple-500/10 rounded-full blur-3xl pointer-events-none"></div>
+      <div class="absolute -top-24 -left-24 w-48 h-48 bg-[#6965db]/10 rounded-full blur-3xl pointer-events-none"></div>
+      <div class="absolute -bottom-24 -right-24 w-48 h-48 bg-[#f06595]/10 rounded-full blur-3xl pointer-events-none"></div>
 
       <!-- Icon & Header -->
       <div class="text-center mb-6">
-        <div class="inline-flex items-center justify-center w-16 h-16 rounded-2xl bg-indigo-950/60 border border-indigo-700/50 text-indigo-400 mb-4 shadow-inner">
+        <div class="inline-flex items-center justify-center w-16 h-16 rounded-2xl bg-[#1e1e1e] border-2 border-[#6965db] text-[#6965db] mb-4 neo-shadow">
           <i :class="isVaultInitialized ? 'fa-solid fa-lock text-2xl' : 'fa-solid fa-key text-2xl'"></i>
         </div>
-        <h2 class="text-2xl font-bold tracking-tight text-white">
+        <h2 class="text-2xl font-bold tracking-tight text-[#e3e3e3]" style="font-family: var(--font-hand)">
           {{ isVaultInitialized ? 'Unlock Vault' : 'Set Up Encrypted Vault' }}
         </h2>
-        <p class="text-sm text-gray-400 mt-2">
+        <p class="text-sm text-[#999999] mt-2">
           {{
             isVaultInitialized
               ? 'Enter your master password or salt to access your 2FA accounts.'
@@ -25,9 +25,9 @@
       <!-- Error Alert -->
       <div
         v-if="authError"
-        class="mb-5 p-3.5 rounded-xl bg-red-950/40 border border-red-800/60 text-red-300 text-sm flex items-start gap-3"
+        class="mb-5 p-3.5 rounded-xl bg-[#1e1e1e] border-2 border-[#f06595] text-[#f06595] text-sm flex items-start gap-3"
       >
-        <i class="fa-solid fa-triangle-exclamation text-red-400 mt-0.5"></i>
+        <i class="fa-solid fa-triangle-exclamation text-[#f06595] mt-0.5"></i>
         <div class="flex-1">
           <p class="font-medium">{{ authError }}</p>
         </div>
@@ -36,7 +36,7 @@
       <!-- Setup Form (First Time) -->
       <form v-if="!isVaultInitialized" @submit.prevent="handleInit" class="space-y-4">
         <div>
-          <label class="block text-sm font-medium text-gray-300 mb-1.5">
+          <label class="block text-sm font-medium text-[#e3e3e3] mb-1.5">
             Master Password / Salt
           </label>
           <div class="relative">
@@ -46,12 +46,12 @@
               placeholder="••••••••••••"
               required
               minlength="4"
-              class="w-full bg-gray-950 border border-gray-700 rounded-xl px-4 py-3 pr-11 text-gray-100 placeholder-gray-600 focus:outline-none focus:ring-2 focus:ring-indigo-500 focus:border-transparent transition"
+              class="w-full bg-[#141414] border-2 border-[#333333] rounded-xl px-4 py-3 pr-11 text-[#e3e3e3] placeholder-[#999999] neo-input"
             />
             <button
               type="button"
               @click="showPassword = !showPassword"
-              class="absolute right-3 top-1/2 -translate-y-1/2 text-gray-500 hover:text-gray-300 p-1 transition cursor-pointer"
+              class="absolute right-3 top-1/2 -translate-y-1/2 text-[#999999] hover:text-[#e3e3e3] p-1 transition cursor-pointer"
               tabindex="-1"
             >
               <i :class="showPassword ? 'fa-solid fa-eye-slash' : 'fa-solid fa-eye'"></i>
@@ -60,7 +60,7 @@
         </div>
 
         <div>
-          <label class="block text-sm font-medium text-gray-300 mb-1.5">
+          <label class="block text-sm font-medium text-[#e3e3e3] mb-1.5">
             Confirm Password / Salt
           </label>
           <div class="relative">
@@ -69,23 +69,23 @@
               :type="showConfirmPassword ? 'text' : 'password'"
               placeholder="••••••••••••"
               required
-              class="w-full bg-gray-950 border border-gray-700 rounded-xl px-4 py-3 pr-11 text-gray-100 placeholder-gray-600 focus:outline-none focus:ring-2 focus:ring-indigo-500 focus:border-transparent transition"
-              :class="{ 'border-red-500': confirmError }"
+              class="w-full bg-[#141414] border-2 border-[#333333] rounded-xl px-4 py-3 pr-11 text-[#e3e3e3] placeholder-[#999999] neo-input"
+              :class="{ 'border-[#f06595]': confirmError }"
             />
             <button
               type="button"
               @click="showConfirmPassword = !showConfirmPassword"
-              class="absolute right-3 top-1/2 -translate-y-1/2 text-gray-500 hover:text-gray-300 p-1 transition cursor-pointer"
+              class="absolute right-3 top-1/2 -translate-y-1/2 text-[#999999] hover:text-[#e3e3e3] p-1 transition cursor-pointer"
               tabindex="-1"
             >
               <i :class="showConfirmPassword ? 'fa-solid fa-eye-slash' : 'fa-solid fa-eye'"></i>
             </button>
           </div>
-          <p v-if="confirmError" class="mt-1 text-xs text-red-400">{{ confirmError }}</p>
+          <p v-if="confirmError" class="mt-1 text-xs text-[#f06595]">{{ confirmError }}</p>
         </div>
 
-        <div class="p-3 bg-indigo-950/30 border border-indigo-900/50 rounded-xl text-xs text-indigo-300 flex items-start gap-2.5">
-          <i class="fa-solid fa-shield-halved text-indigo-400 mt-0.5"></i>
+        <div class="p-3 bg-[#1e1e1e] border-2 border-[#333333] rounded-xl text-xs text-[#6965db] flex items-start gap-2.5">
+          <i class="fa-solid fa-shield-halved text-[#6965db] mt-0.5"></i>
           <span>
             <strong>Security:</strong> All accounts are stored locally in your browser and encrypted with PBKDF2 + AES-GCM (256-bit). Data cannot be decrypted without your password / salt.
           </span>
@@ -94,7 +94,7 @@
         <button
           type="submit"
           :disabled="isLoading || !passphrase || !confirmPassphrase"
-          class="w-full py-3.5 px-4 rounded-xl font-semibold text-sm transition flex items-center justify-center gap-2 bg-gradient-to-r from-indigo-600 to-indigo-500 hover:from-indigo-500 hover:to-indigo-400 text-white shadow-lg shadow-indigo-600/20 disabled:opacity-40 disabled:cursor-not-allowed cursor-pointer"
+          class="w-full py-3.5 px-4 rounded-xl font-semibold text-sm transition flex items-center justify-center gap-2 bg-[#6965db] border-2 border-[#6965db] text-white neo-button hover:bg-[#12b886] hover:border-[#12b886] disabled:opacity-40 disabled:cursor-not-allowed cursor-pointer"
         >
           <i v-if="isLoading" class="fa-solid fa-circle-notch fa-spin text-sm"></i>
           <i v-else class="fa-solid fa-lock-open text-xs"></i>
@@ -105,7 +105,7 @@
       <!-- Unlock Form (Subsequent Visits) -->
       <form v-else @submit.prevent="handleUnlock" class="space-y-4">
         <div>
-          <label class="block text-sm font-medium text-gray-300 mb-1.5">
+          <label class="block text-sm font-medium text-[#e3e3e3] mb-1.5">
             Master Password / Salt
           </label>
           <div class="relative">
@@ -115,12 +115,12 @@
               placeholder="••••••••••••"
               required
               autofocus
-              class="w-full bg-gray-950 border border-gray-700 rounded-xl px-4 py-3 pr-11 text-gray-100 placeholder-gray-600 focus:outline-none focus:ring-2 focus:ring-indigo-500 focus:border-transparent transition"
+              class="w-full bg-[#141414] border-2 border-[#333333] rounded-xl px-4 py-3 pr-11 text-[#e3e3e3] placeholder-[#999999] neo-input"
             />
             <button
               type="button"
               @click="showPassword = !showPassword"
-              class="absolute right-3 top-1/2 -translate-y-1/2 text-gray-500 hover:text-gray-300 p-1 transition cursor-pointer"
+              class="absolute right-3 top-1/2 -translate-y-1/2 text-[#999999] hover:text-[#e3e3e3] p-1 transition cursor-pointer"
               tabindex="-1"
             >
               <i :class="showPassword ? 'fa-solid fa-eye-slash' : 'fa-solid fa-eye'"></i>
@@ -131,7 +131,7 @@
         <button
           type="submit"
           :disabled="isLoading || !passphrase"
-          class="w-full py-3.5 px-4 rounded-xl font-semibold text-sm transition flex items-center justify-center gap-2 bg-gradient-to-r from-indigo-600 to-indigo-500 hover:from-indigo-500 hover:to-indigo-400 text-white shadow-lg shadow-indigo-600/20 disabled:opacity-40 disabled:cursor-not-allowed cursor-pointer"
+          class="w-full py-3.5 px-4 rounded-xl font-semibold text-sm transition flex items-center justify-center gap-2 bg-[#6965db] border-2 border-[#6965db] text-white neo-button hover:bg-[#12b886] hover:border-[#12b886] disabled:opacity-40 disabled:cursor-not-allowed cursor-pointer"
         >
           <i v-if="isLoading" class="fa-solid fa-circle-notch fa-spin text-sm"></i>
           <i v-else class="fa-solid fa-lock-open text-xs"></i>
@@ -139,38 +139,38 @@
         </button>
 
         <!-- Reset Vault Section -->
-        <div class="pt-4 border-t border-gray-800/80 text-center">
+        <div class="pt-4 border-t-2 border-[#333333] text-center">
           <button
             type="button"
             @click="showResetConfirm = !showResetConfirm"
-            class="text-xs text-gray-500 hover:text-gray-400 underline transition cursor-pointer"
+            class="text-xs text-[#999999] hover:text-[#e3e3e3] underline transition cursor-pointer"
           >
             Forgot password? Reset and wipe vault
           </button>
 
           <div
             v-if="showResetConfirm"
-            class="mt-4 p-4 rounded-xl bg-red-950/30 border border-red-800/50 text-left space-y-3"
+            class="mt-4 p-4 rounded-xl bg-[#1e1e1e] border-2 border-[#f06595] text-left space-y-3"
           >
-            <div class="flex items-center gap-2 text-red-400 font-semibold text-xs">
+            <div class="flex items-center gap-2 text-[#f06595] font-semibold text-xs">
               <i class="fa-solid fa-triangle-exclamation"></i>
               <span>Warning: Data Loss Danger</span>
             </div>
-            <p class="text-xs text-gray-400 leading-relaxed">
+            <p class="text-xs text-[#999999] leading-relaxed">
               Resetting the vault will permanently delete all encrypted accounts stored in this browser. You will then be able to configure a new master password / salt.
             </p>
             <div class="flex items-center gap-2">
               <button
                 type="button"
                 @click="confirmReset"
-                class="flex-1 py-2 px-3 bg-red-600 hover:bg-red-500 text-white text-xs font-semibold rounded-lg transition cursor-pointer"
+                class="flex-1 py-2 px-3 bg-[#f06595] border-2 border-[#f06595] hover:bg-[#f06595] text-white text-xs font-semibold rounded-lg neo-button cursor-pointer"
               >
                 Yes, Reset Vault
               </button>
               <button
                 type="button"
                 @click="showResetConfirm = false"
-                class="py-2 px-3 bg-gray-800 hover:bg-gray-700 text-gray-300 text-xs font-semibold rounded-lg transition cursor-pointer"
+                class="py-2 px-3 bg-[#1e1e1e] border-2 border-[#333333] hover:bg-[#1e1e1e] text-[#999999] text-xs font-semibold rounded-lg neo-button cursor-pointer"
               >
                 Cancel
               </button>
