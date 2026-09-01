@@ -1,23 +1,28 @@
-const BASE32_CHARS = 'ABCDEFGHIJKLMNOPQRSTUVWXYZ234567'
+const BASE32_ALPHABET = 'ABCDEFGHIJKLMNOPQRSTUVWXYZ234567'
 
 export function base32Decode(input) {
-  const str = input.replace(/\s/g, '').replace(/=+$/, '').toUpperCase()
-  let bits = 0
-  let value = 0
-  const output = []
+  // Remove whitespace and padding, convert to uppercase
+  const cleanedInput = input.replace(/\s/g, '').replace(/=+$/, '').toUpperCase()
+  let accumulatedBits = 0
+  let bitBuffer = 0
+  const decodedBytes = []
 
-  for (const char of str) {
-    const idx = BASE32_CHARS.indexOf(char)
-    if (idx === -1) throw new Error(`Invalid Base32 character: ${char}`)
-    value = (value << 5) | idx
-    bits += 5
-    if (bits >= 8) {
-      output.push((value >>> (bits - 8)) & 0xff)
-      bits -= 8
+  for (const character of cleanedInput) {
+    const charIndex = BASE32_ALPHABET.indexOf(character)
+    if (charIndex === -1) {
+      throw new Error(`Invalid Base32 character: ${character}`)
+    }
+    bitBuffer = (bitBuffer << 5) | charIndex
+    accumulatedBits += 5
+
+    // Extract full bytes when we have at least 8 bits
+    if (accumulatedBits >= 8) {
+      decodedBytes.push((bitBuffer >>> (accumulatedBits - 8)) & 0xff)
+      accumulatedBits -= 8
     }
   }
 
-  return new Uint8Array(output)
+  return new Uint8Array(decodedBytes)
 }
 
 async function hmacHash(keyBytes, dataBytes, algorithm = 'SHA-1') {
@@ -32,36 +37,44 @@ async function hmacHash(keyBytes, dataBytes, algorithm = 'SHA-1') {
   return new Uint8Array(signature)
 }
 
-function hmacLastByteIndex(algorithm) {
+function getHmacOutputByteIndex(algorithm) {
+  // Returns the index of the last byte in the HMAC output for different algorithms
   switch (algorithm) {
-    case 'SHA-256': return 31
-    case 'SHA-512': return 63
-    default: return 19
+    case 'SHA-256':
+      return 31
+    case 'SHA-512':
+      return 63
+    default:
+      return 19 // SHA-1
   }
 }
 
 async function hotp(secret, counter, digits = 6, algorithm = 'SHA-1') {
   const keyBytes = base32Decode(secret)
 
+  // Convert counter to 8-byte big-endian array
   const counterBytes = new Uint8Array(8)
-  let c = BigInt(counter)
+  let counterValue = BigInt(counter)
   for (let i = 7; i >= 0; i--) {
-    counterBytes[i] = Number(c & 0xffn)
-    c >>= 8n
+    counterBytes[i] = Number(counterValue & 0xffn)
+    counterValue >>= 8n
   }
 
   const hmac = await hmacHash(keyBytes, counterBytes, algorithm)
 
-  const lastByte = hmacLastByteIndex(algorithm)
-  const offset = hmac[lastByte] & 0x0f
+  // Extract the dynamic offset from the last 4 bits of the last byte
+  const lastByteIndex = getHmacOutputByteIndex(algorithm)
+  const offset = hmac[lastByteIndex] & 0x0f
+
+  // Build the code from 4 bytes starting at the offset
   const code =
     ((hmac[offset] & 0x7f) << 24) |
     ((hmac[offset + 1] & 0xff) << 16) |
     ((hmac[offset + 2] & 0xff) << 8) |
     (hmac[offset + 3] & 0xff)
 
-  const mod = digits === 8 ? 100_000_000 : 1_000_000
-  return String(code % mod).padStart(digits, '0')
+  const modulus = digits === 8 ? 100_000_000 : 1_000_000
+  return String(code % modulus).padStart(digits, '0')
 }
 
 export async function generateTotp(
@@ -82,26 +95,29 @@ export async function generateSteamCode(secret, stepOffset = 0) {
   const timeStep = Math.floor(Date.now() / 1000 / period) + stepOffset
   const keyBytes = base32Decode(secret)
 
+  // Convert time step to 8-byte big-endian array
   const counterBytes = new Uint8Array(8)
-  let c = BigInt(timeStep)
+  let counterValue = BigInt(timeStep)
   for (let i = 7; i >= 0; i--) {
-    counterBytes[i] = Number(c & 0xffn)
-    c >>= 8n
+    counterBytes[i] = Number(counterValue & 0xffn)
+    counterValue >>= 8n
   }
 
   const hmac = await hmacHash(keyBytes, counterBytes, 'SHA-1')
 
+  // Extract the code using the same method as HOTP
   const offset = hmac[19] & 0x0f
-  let fullCode =
+  let numericCode =
     ((hmac[offset] & 0x7f) << 24) |
     ((hmac[offset + 1] & 0xff) << 16) |
     ((hmac[offset + 2] & 0xff) << 8) |
     (hmac[offset + 3] & 0xff)
 
+  // Convert to Steam's custom alphabet (no ambiguous characters like 1, I, 0, O, etc.)
   let steamCode = ''
   for (let i = 0; i < 5; i++) {
-    steamCode += STEAM_ALPHABET[fullCode % STEAM_ALPHABET.length]
-    fullCode = Math.floor(fullCode / STEAM_ALPHABET.length)
+    steamCode += STEAM_ALPHABET[numericCode % STEAM_ALPHABET.length]
+    numericCode = Math.floor(numericCode / STEAM_ALPHABET.length)
   }
 
   return steamCode

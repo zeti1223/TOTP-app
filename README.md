@@ -1,81 +1,79 @@
 # TOTP Authenticator
 
-A privacy-first, browser-based two-factor authentication (2FA) app. All secrets are stored **locally in your browser** and encrypted with a master password — no server, no account, no cloud.
+A simple, private two-factor authentication (2FA) app that runs right in your browser. Your secrets stay on your device - they're encrypted with a password you choose and stored locally. No servers, no accounts, no cloud syncing.
 
-## Features
+## What it can do
 
-- **Encrypted vault** — secrets are protected with AES-256-GCM, derived from your master password via PBKDF2
-- **TOTP & HOTP support** — fully implements RFC 4226 and RFC 6238 using the native Web Crypto API
-- **Steam Guard** — generates 5-character alphanumeric Steam codes
-- **QR code scanning** — add accounts by scanning a QR code directly from your camera
-- **QR code export** — display a QR code for any saved account for easy transfer to another device
-- **Account management** — add, edit, and delete accounts
-- **Multiple algorithm support** — SHA-1, SHA-256, SHA-512
-- **Configurable code length** — 6 or 8 digit codes with a custom time period
-- **Dark mode UI** — built with Tailwind CSS
+- **Keeps your secrets safe** - Everything is encrypted with AES-256-GCM using your master password
+- **Works with TOTP & HOTP** - Full support for the standard 2FA protocols (RFC 4226 and RFC 6238)
+- **Steam Guard support** - Generates those 5-character Steam codes
+- **Scan QR codes** - Add accounts by pointing your camera at a QR code
+- **Share via QR** - Show a QR code for any account to easily move it to another device
+- **Manage your accounts** - Add, edit, or delete accounts as needed
+- **Different algorithms** - Supports SHA-1, SHA-256, and SHA-512
+- **Flexible code settings** - Choose 6 or 8 digit codes, and customize the time period
+- **Dark mode** - Easy on the eyes, built with Tailwind CSS
 
-## Tech Stack
+## How it's built
 
-| Layer | Technology |
-|---|---|
-| Framework | [Vue 3](https://vuejs.org/) (Composition API) |
-| Build tool | [Vite](https://vitejs.dev/) |
-| Styling | [Tailwind CSS](https://tailwindcss.com/) |
-| Icons | [Font Awesome](https://fontawesome.com/) |
-| QR scanning | [jsQR](https://github.com/cozmo/jsQR) |
-| QR generation | [qrcode](https://github.com/soldair/node-qrcode) |
-| Crypto | Browser-native [Web Crypto API](https://developer.mozilla.org/en-US/docs/Web/API/Web_Crypto_API) |
+- **Vue 3** - The JavaScript framework (using the Composition API)
+- **Vite** - For fast development and building
+- **Tailwind CSS** - Styling
+- **Font Awesome** - Icons
+- **jsQR** - Scanning QR codes with your camera
+- **qrcode** - Generating QR codes to share accounts
+- **Web Crypto API** - Built-in browser encryption (no external crypto libraries)
 
-## Security Model
+## How your data stays secure
 
-- **Key derivation**: PBKDF2 with SHA-256, 100,000 iterations, random 16-byte salt
-- **Encryption**: AES-256-GCM with a random 12-byte IV per save
-- **Storage**: Encrypted vault stored in `localStorage` — nothing leaves your device
-- **In-memory only**: The decryption key is held in memory only while the vault is unlocked; locking clears it immediately
+- **Strong password protection** - Your master password is processed with PBKDF2 (100,000 iterations) to create the encryption key
+- **AES-256-GCM encryption** - Industry-standard encryption with a unique random key for each save
+- **Local storage only** - Everything stays in your browser's localStorage, nothing gets sent anywhere
+- **Memory safety** - The decryption key is only kept in memory while the vault is unlocked. Locking it wipes the key immediately
 
-> **Caution:** Clearing browser storage or `localStorage` will permanently destroy your encrypted vault. Back up your secrets before resetting.
+> **Important:** If you clear your browser data or localStorage, your encrypted vault will be gone forever. Make sure to back up your secrets before doing that.
 
-## Getting Started
+## Setting it up
 
-### Prerequisites
+### What you need
 
-- [Node.js](https://nodejs.org/) v18 or later
-- [npm](https://www.npmjs.com/) (comes with Node.js)
+- Node.js version 18 or newer
+- npm (comes with Node.js)
 
-### Installation
+### Installing
 
 ```bash
-# Clone the repository
+# Clone the repo
 git clone https://github.com/zeti1223/TOTP-app.git
 cd "TOTP-app"
 
-# Install dependencies
+# Install the dependencies
 npm install
 ```
 
-### Development
+### Running it locally
 
 ```bash
 npm run dev
 ```
 
-Then open [http://localhost:5173](http://localhost:5173) in your browser.
+Then open http://localhost:5173 in your browser.
 
-### Production Build
+### Building for production
 
 ```bash
 npm run build
 ```
 
-The compiled output will be in the `dist/` folder. You can serve it with any static file server.
+The built files will be in the `dist/` folder. You can host these with any static file server.
 
-## Usage
+## How to use it
 
-1. **First launch** — create a master password to initialize the encrypted vault.
-2. **Add accounts** — tap the **+** button and either:
+1. **First time setup** - Create a master password to secure your vault
+2. **Add your accounts** - Click the **+** button and choose one of these:
    - Scan a QR code with your camera
-   - Paste an `otpauth://` URI
-   - Enter the secret key manually
-3. **Use codes** — the 6- or 8-digit TOTP code is displayed with a live countdown timer.
-4. **Lock** — click the lock icon in the header to clear the vault from memory.
-5. **Transfer** — tap the QR icon on any account
+   - Paste an `otpauth://` link
+   - Type in the secret key manually
+3. **Get your codes** - The 6- or 8-digit code appears with a countdown timer showing when it changes
+4. **Lock it up** - Click the lock icon to clear the vault from memory when you're done
+5. **Move accounts** - Click the QR icon on any account to show a code you can scan on another device
